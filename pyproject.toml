@@ -1,0 +1,59 @@
+[project]
+name = "pytest-result-sender"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "ziyu", email = "1290289413@qq.com"},
+]
+dependencies = ["pytest>=8.4.0"]
+requires-python = ">=3.10"
+readme = "README.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+
+[tool.pdm]
+distribution = true
+
+[tool.pdm.build]
+package-dir = "src"
+[project.entry-points.pytest11]
+result_log = "pytest_result_sender.plugin"
+
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "isort>=6.0.1",
+    "flake8>=7.2.0",
+]
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.black]
+exclude = '''
+/(
+     \.git
+    | \.hg
+    | \.tox
+    | venv
+    | buck-out
+    | build
+    | dist
+)/
+'''
+
+[tool.pdm.scripts]
+check = { composite = [
+    "isort .",
+    "black .",
+    "flakes .",
+] }
+
+test = "pytest"
