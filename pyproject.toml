@@ -5,7 +5,7 @@ description = "Default template for PDM package"
 authors = [
     {name = "ziyu", email = "1290289413@qq.com"},
 ]
-dependencies = ["pytest>=8.4.0"]
+dependencies = ["pytest>=8.4.0", "requests>=2.32.4"]
 requires-python = ">=3.10"
 readme = "README.md"
 license = {text = "MIT"}
@@ -53,7 +53,7 @@ exclude = '''
 check = { composite = [
     "isort .",
     "black .",
-    "flakes .",
+    "flakes8 .",
 ] }
 
 test = "pytest"
