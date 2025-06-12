@@ -57,3 +57,8 @@ check = { composite = [
 ] }
 
 test = "pytest"
+
+[tool.pytest.ini_options]
+# 与pytest_addoption中注册的配置项一致
+send_when = "on_fail"
+send_api = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=b1ba5bd9-029a-43ed-91e4-c1a2658f734f"
