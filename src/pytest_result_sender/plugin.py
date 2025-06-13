@@ -8,15 +8,11 @@ data = {
     "failed": 0,
 }
 
+
 def pytest_addoption(parser):
-    parser.addini(
-        'send_when',
-        help="什么时候发送测试结果"
-    )
-    parser.addini(
-        'send_api',
-        help="结果发往何处"
-    )
+    parser.addini("send_when", help="什么时候发送测试结果")
+    parser.addini("send_api", help="结果发往何处")
+
 
 def pytest_runtest_logreport(report: pytest.TestReport):
     if report.when == "call":
@@ -34,6 +30,7 @@ def pytest_configure(config: pytest.Config):
     data["send_when"] = config.getini("send_when")
     data["send_api"] = config.getini("send_api")
 
+
 def pytest_unconfigure():
     # 配置加载完毕后执行，所有测试用例前执行
     data["end_time"] = datetime.now()
@@ -49,16 +46,17 @@ def pytest_unconfigure():
 
     send_result()
 
+
 def send_result():
-    if data['send_when'] == 'on_fail' and data['failed'] == 0:
-        #如果配置失败才发送，但实际没有失败，则不发送
+    if data["send_when"] == "on_fail" and data["failed"] == 0:
+        # 如果配置失败才发送，但实际没有失败，则不发送
         return
-    if not data['send_api']:
-        #如果没有配置api地址，则不发送
+    if not data["send_api"]:
+        # 如果没有配置api地址，则不发送
         print("api失败")
         return
 
-    url = data['send_api'] #动态指定结果发送位置
+    url = data["send_api"]  # 动态指定结果发送位置
 
     content = f"""
     pytest自动化测试结果
@@ -74,7 +72,10 @@ def send_result():
     """
 
     try:
-        requests.post(url, json={"msgtype": "markdown",
-                                 "markdown": {"content": content}})
+        requests.post(
+            url, json={"msgtype": "markdown", "markdown": {"content": content}}
+        )
     except Exception:
         pass
+
+    data["send_done"] = 1  # 发送成功
