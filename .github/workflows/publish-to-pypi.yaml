@@ -1,29 +1,37 @@
-name: Publish Python  distributions  to PyPI
+name: Publish Python distributions to PyPI
 
 on:
-push:
-  tags:
-    - '*'
+  push:
+    tags:
+      - '*'
 
 jobs:
   build-publish:
-    name: Build and publish Python  distributions  to PyPI
+    name: Build and publish Python distributions to PyPI
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
       - name: Set up Python 3.10
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
-      - name: Install pypa/build
-        run: python -m pip install build --user
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine  # 明确安装 build 和 twine
 
       - name: Build a binary wheel and a source tarball
-        run: python -m build --wheel --outdir dist/
+        run: python -m build --outdir dist/  # 移除 --wheel 参数，让 build 自动决定
 
-      - name: Publish distribution  to PyPI
-        if: startsWith(github.ref,'refs/tags/')
-        uses: pypa/gh-action-pypi-publish@master
+      - name: Verify build artifacts
+        run: |
+          ls -l dist/  # 查看 dist 目录内容
+          test -n "$(ls -A dist/)"  # 验证目录非空
+
+      - name: Publish distribution to PyPI
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: pypa/gh-action-pypi-publish@release/v1  # 使用稳定版本
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
